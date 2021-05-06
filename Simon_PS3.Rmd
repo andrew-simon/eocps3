@@ -1,0 +1,13 @@
+---
+title: "EOC PS2"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(readxl)
+library(tidyverse)
+```
+```{r data import}
+beef <- read_xlsx('olderbeef.xlsx') %>%
+```
