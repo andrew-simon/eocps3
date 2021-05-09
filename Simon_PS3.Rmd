@@ -9,5 +9,27 @@ library(readxl)
 library(tidyverse)
 ```
 ```{r data import}
-beef <- read_xlsx('olderbeef.xlsx') %>%
+beef <- read_xlsx('olderbeef.xlsx')
+beef$Year <- as.numeric(as.character(beef$Year))
+beef <- mutate(beef , lagyear = Year + 20) %>%
+  mutate(normcons = (percapconsumption/33.67591811) * 100)
+
+
+murder <- read_xlsx('murder.xlsx') %>%
+  rename(consumption = 'Per capita availability: Boneless')
+murder$Year <- as.numeric(as.character(murder$Year))
+murder$murder <- as.numeric(as.character(murder$murder))
+murder <-  mutate(murder , normmurder = (murder/5.4) * 100)
+
+data <- full_join(x = beef , y = murder, by = 'Year')
+
+ggplot() +
+  geom_line(data = beef ,  mapping = aes(x = lagyear , y = normcons , color = 'Beef consumption' )) + 
+  geom_line(data = murder , mapping = aes(x = Year , y = normmurder , color = 'Murder rate')) + 
+  scale_x_continuous(name = 'Year' , limits = c(1950 , 2019)) + 
+  scale_y_continuous(name = 'Normalized value') +
+  labs(colour = '' , 
+       title = 'U.S. Murder rate and beef consumption' , 
+       subtitle = 'Per capita normalized values; beef consumption lagged by 20 years') + theme_minimal()
+
 ```
