@@ -22,7 +22,13 @@ murder$murder <- as.numeric(as.character(murder$murder))
 murder <-  mutate(murder , normmurder = (murder/5.4) * 100)
 
 data <- full_join(x = beef , y = murder, by = 'Year')
+```
+## Question 1
+Begin by collecting national data on annual U.S. beef consumption per capita from 1930 to the present (or something similar to that...the government collects a variety of related statistics) and annual U.S. homicide per capita from 1950 to the present.  Make a graph that plots homicide rates against the 20 year lag of beef consumption. Compute the simple correlation between those two data series. Assuming the relationship is causal, how much could we reduce violent crime if we eliminated all beef consumption?  Does this magnitude seem reasonable or unreasonable?
 
+#### Response
+I used boneless beef availability data from the USDA as a proxy for beef consumption in the US. I used a combination of data from the FBI Unified Crime Reports and the U.S. Department of Health, Education, and Welfare (now Health and Human Services and Education) for the murder rate. Data from 1950-1960 is from the USHEW, 1960-2019 is from the FBI UCR. 
+```{r plot}
 ggplot() +
   geom_line(data = beef ,  mapping = aes(x = lagyear , y = normcons , color = 'Beef consumption' )) + 
   geom_line(data = murder , mapping = aes(x = Year , y = normmurder , color = 'Murder rate')) + 
@@ -31,5 +37,7 @@ ggplot() +
   labs(colour = '' , 
        title = 'U.S. Murder rate and beef consumption' , 
        subtitle = 'Per capita normalized values; beef consumption lagged by 20 years') + theme_minimal()
-
+```
+```{r model}
+lm()
 ```
