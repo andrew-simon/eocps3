@@ -1,6 +1,8 @@
 ---
 title: "EOC PS2"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -15,8 +17,7 @@ beef <- mutate(beef , lagyear = Year + 20) %>%
   mutate(normcons = (percapconsumption/33.67591811) * 100)
 
 
-murder <- read_xlsx('murder.xlsx') %>%
-  rename(consumption = 'Per capita availability: Boneless')
+murder <- read_xlsx('murder.xlsx')
 murder$Year <- as.numeric(as.character(murder$Year))
 murder$murder <- as.numeric(as.character(murder$murder))
 murder <-  mutate(murder , normmurder = (murder/5.4) * 100)
@@ -44,3 +45,47 @@ data <- full_join(x = beef , y = murder, by = 'lagyear') %>%
 model <- lm(murder ~ percapconsumption , data)
 summary(model)
 ```
+
+## Question 2
+If instead of national-level data, you had annual, state-level data from 1930-present on beef and homicide, describe how you would analyze it. Be specific. What would your regression look like?  What covariates would you want to include?
+
+### Response
+
+With state-level annual data I would run a regression controlling for state and time effects to use panel data. The use of panel data would control for a number of confounding factors, and allow for a more robust causal conclusion. 
+
+I would regress the murder rate on percent change in lagged, per capita beef consumption by state per year, setting 1930 (lagged to 1950) as the base level. I would include dummy variables for every year and every state to ensure the regression uses panel data and isolates the effect of increased beef consumption. 
+
+In addition to using state and year dummys, I would like to include controls for other major variables that effect crime. Ideally, this would include abortions per year and crack cocaine prevalence. By controlling for these two variables which have a significant effect on crime, the panel data could provide a better causal estimate of the effect of beef consumption on murder.
+
+## Question 3
+
+Imagine you were able to run a randomized experiment, and that you could do whatever you wanted to, subject to a budget of $5 million. you want the experiment to be a good one. Describe the experiment you would run. Explain the choices you make. What are the weaknesses of your randomized experiment?
+
+### Response
+
+I would run an RCT centering on a number of families in a single city. Ideally, I would randomize at the school level. Randomizing at the school level would limit 
+
+## Question 4
+
+Now, let’s say you have zero budget. Professor Levitt wants you to find three different natural experiments that might shed light on this question.  Give your three best ideas for possible natural experiments you might be able to exploit. I want these to be real things that you could actually explore. What are the strengths and weaknesses of your natural experiments. 
+
+### Response
+
+1) As a result of various religious and cultural factors, the legality of slaughtering cows varies greatly across India. Exploiting these differences, I would want to either run a panel data regression if annual state murder data is sufficient, or run a Difference-in-Differences regression using legality as the treatment. The laws are quite variable and have changed significantly over time. An example difference-in-differences event could be the 1994 passage of a cattle slaughter ban in Delhi.\\
+
+This is a strong natural experiment because of this legislation's clear impact and reflection of beef eating habits on a national scale by region. I believe the fixed-effect regression would be more revealing than the DiD, as the passage of legislation that bans cattle-slaughter is likely reflective of cultural and religious factors that imply limited beef consumption both before and after treatment. However, with the number of regions where beef consumption is more common, fixed effects regression could reveal a strong causal effect.\\
+
+This is a weak natural experiment because it establishes treatment and control groups that are fundamentally different. Because the consumption of beef is a reflection of the cultural and religious situation across India, comparing states which do consume beef to those which don't could allow for the introduction of numerous confounders that are difficult to control for. I am in no way an expert on Indian culture and beef consumption, and have no way of knowing or predicting the potential confounders that might arise as a result of this type of fixed effects regression. \\
+
+![](IndiaCowLegality.png)
+
+2)
+
+## Question 5
+
+For one of your natural experiments in question 4, gather a little bit of data...just enough to get some idea of how big an impact your natural experiment had on beef consumption.  If you absolutely can’t find relevant data, try to make an educated guess at the impact. (In either case, don’t worry about trying to figure out the actual impact on crime.)
+
+### Response
+
+
+
