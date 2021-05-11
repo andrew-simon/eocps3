@@ -27,7 +27,7 @@ murder <-  mutate(murder , normmurder = (murder/5.4) * 100)
 Begin by collecting national data on annual U.S. beef consumption per capita from 1930 to the present (or something similar to that...the government collects a variety of related statistics) and annual U.S. homicide per capita from 1950 to the present.  Make a graph that plots homicide rates against the 20 year lag of beef consumption. Compute the simple correlation between those two data series. Assuming the relationship is causal, how much could we reduce violent crime if we eliminated all beef consumption?  Does this magnitude seem reasonable or unreasonable?
 
 #### Response
-I used boneless beef availability data from the USDA as a proxy for beef consumption in the US. I used a combination of data from the FBI Unified Crime Reports and the U.S. Department of Health, Education, and Welfare (now Health and Human Services and Education) for the murder rate. Data from 1950-1960 is from the USHEW, 1960-2019 is from the FBI UCR. 
+I used boneless beef availability data from the USDA as a proxy for beef consumption in the US. Of the data availability, boneless availability seemed the best proxy as it is closest to what actually ends up on plates and in stomachs in America. I used a combination of data from the FBI Unified Crime Reports and the U.S. Department of Health, Education, and Welfare (now Health and Human Services and Education) for the murder rate. Data from 1950-1960 is from the USHEW, 1960-2019 is from the FBI UCR. 
 ```{r plot}
 ggplot() +
   geom_line(data = beef ,  mapping = aes(x = lagyear , y = normcons , color = 'Beef consumption' )) + 
@@ -46,6 +46,16 @@ data <- full_join(x = beef , y = murder, by = 'lagyear') %>%
 model <- lm(murder ~ percapconsumption , data)
 summary(model)
 ```
+
+The coefficient on per capita beef boneless availability is 0.0411. This implies that for every one pound of beef that each American consumes, 0.0411 more murders will be committed. This correlation does not seem valid to me, as that is a large number of murders. If this were truly a causal estimate, I alone would be probably responsible for at least one murder (24 pounds of annual consumption) in my lifetime. 
+ 
+```{r total}
+model2 <- lm(murder ~ totalconsumption , data)
+summary(model2)
+```
+The coeffiecent on total boneless beef availability is .00003351 ($3.351 \times 10^{-5}$). This implies that for every million pounds of beef made available to Americans, .0000351 murders are committed.
+
+Americans consumed `r 18184.2*1,000,000` pounds of beef in 2019 (from USDA boneless availability reports), which is 55.4 pounds per person. This correlation implies that if we ended beef consumption, we could prevent `r 18184.2*0.00003351` murders. This does not seem very
 
 ## Question 2
 If instead of national-level data, you had annual, state-level data from 1930-present on beef and homicide, describe how you would analyze it. Be specific. What would your regression look like?  What covariates would you want to include?
@@ -82,11 +92,13 @@ Now, let’s say you have zero budget. Professor Levitt wants you to find three 
 
 This is a strong natural experiment because of this legislation's clear impact and reflection of beef eating habits on a national scale by region. I believe the fixed-effect regression would be more revealing than the DiD, as the passage of legislation that bans cattle-slaughter is likely reflective of cultural and religious factors that imply limited beef consumption both before and after treatment. However, with the number of regions where beef consumption is more common, fixed effects regression could reveal a strong causal effect.
 
-This is a weak natural experiment because it establishes treatment and control groups that are fundamentally different. Because the consumption of beef is a reflection of the cultural and religious situation across India, comparing states which do consume beef to those which don't could allow for the introduction of numerous confounders that are difficult to control for. I am in no way an expert on Indian culture and beef consumption, and have no way of knowing or predicting the potential confounders that might arise as a result of this type of fixed effects regression. 
+This is a weak natural experiment because it establishes treatment and control groups that are fundamentally different. Because the consumption of beef is a reflection of the cultural and religious situation across India, comparing states which do consume beef to those which don't could allow for the introduction of numerous confounders that are difficult to control for. I am in no way an expert on Indian culture and beef consumption, and have no way of knowing or predicting the potential confounders that might arise as a result of this type of fixed effects regression. Additionally, these laws reflect the legality of slaughtering cattle, not the legality of consuming or importing beef. These laws likely indicate regional beef consumption, but this is inherently linked to other cultural factors. As has become more apparently in recent years, Muslim individuals in India (likely the majority of the beef-eating populations), are systematically discriminated against and have a different political situation than Hindu people.
+
+A differences-in-differences experiment would provide a better specified model and a more legitimate causal assumption. Beef laws in India, however, do not provide for a very effective difference-in-difference experiment. The 1994 law change in Delhi I mentioned earlier was apparently more of a reflection of limited beef consumption and pro-cow beliefs that define Delhi politics. The likelihood that a significant number of young people consumed different amounts of beef before and after this law change is limited. 
 
 ![https://en.wikipedia.org/wiki/Cattle_slaughter_in_India](IndiaCowLegality.png)
 
-2) Bovine Spongiform Encephalopathy, otherwise known as Mad Cow Disease, is an prion-based infectious disease that affects the human brain and is nearly 100% fatal. BSE first rose to prominence and national attention in the UK in the 1980s, causing thousands of cattle to be culled and millions of UK citizens to stop eating beef altogether. The concern over BSE was so great that in 1989 the UK government banned the human consumption of high risk offal.
+2) Bovine Spongiform Encephalopathy, otherwise known as Mad Cow Disease, is an prion-based infectious disease that affects the human brain and is nearly 100% fatal. An individual contracts BSE by consuming infected beef. BSE first rose to prominence and national attention in the UK in the 1980s, causing thousands of cattle to be culled and millions of UK citizens to stop eating beef altogether. The concern over BSE was so great that in 1989 the UK government banned the human consumption of high risk offal.
 
 The generation of children that were born and raised from 1985-1990 in the UK likely consumed significantly less beef as a result of the outbreak. Manipulating this natural variation that arose because of the BSE scare, I would compare the cohort of children in the UK that were born from 1985-1990 (the height of the BSE scare) to the cohort born directly after (1990-1995). 
 
